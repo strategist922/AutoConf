@@ -18,11 +18,13 @@
 
 package br.ufpr.inf.lbd.autoconf;
 
+import java.io.FileInputStream;
 import java.rmi.RMISecurityManager;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
+import java.util.Properties;
 
 public class AutoConfImpl implements AutoConf {
   Index index;
@@ -60,11 +62,17 @@ public class AutoConfImpl implements AutoConf {
       System.setSecurityManager(new RMISecurityManager());
 
     try {
+      Properties rmiconfig = new Properties();
+      FileInputStream in = new FileInputStream("autoconf.conf");
+      rmiconfig.load(in);
+
       AutoConfImpl server = new AutoConfImpl();
       AutoConf stub = (AutoConf) UnicastRemoteObject.exportObject(server, 0);
       Registry registry = LocateRegistry.createRegistry(50123);
-      registry.rebind("//localhost/AutoConf", stub);
-      System.out.println("AutoConf: AutoConf server is running...");
+      registry.rebind("//" + rmiconfig.getProperty("RMI_SERVER") + "/AutoConf", stub);
+      in.close();
+
+      System.out.println("* AutoConf server is running at " +  rmiconfig.getProperty("RMI_SERVER") + ".");
     } catch (Exception e) {
       System.err.println("AutoConf error: " + e.getMessage());
       e. printStackTrace();
