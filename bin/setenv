@@ -43,11 +43,10 @@ case ${OSTYPE} in
 esac
 
 ## AutoConf
-AUTOCONF_JAR="${AUTOCONF_HOME}/autoconf-0.1.jar"
-AUTOCONF_LIB="${AUTOCONF_HOME}/lib/"
 AUTOCONF_CLASS="br.ufpr.inf.lbd.autoconf.AutoConfImpl"
-AUTOCONF_CLASSPATH=".:${JAVA_CLASSPATH}"
-AUTOCONF_CLASSPATH="$AUTOCONF_CLASSPATH:/Users/Edson/Documents/Repositories/AutoConf/out/production/AutoConf"
+AUTOCONF_JAR="${AUTOCONF_HOME}/build/autoconf-0.1.jar"
+AUTOCONF_LIB="${AUTOCONF_HOME}/lib/"
+AUTOCONF_CLASSPATH=".:${JAVA_CLASSPATH}:${AUTOCONF_HOME}/build/:${AUTOCONF_HOME}/build/production/AutoConf/"
 
 ## Java Options
 JAVA_LINK=$(which java)
