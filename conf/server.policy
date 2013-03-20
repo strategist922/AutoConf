@@ -1,0 +1,3 @@
+grant codeBase "file:/Users/Edson/Documents/Repositories/AutoConf/-" {
+    permission java.security.AllPermission;
+};
