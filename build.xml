@@ -1,0 +1,226 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="autoconf" default="all">
+  
+   <property environment="env"/>
+	<property name="path.variable.maven_repository" value="${env.$HOME}/.m2/repository"/>
+	<property name="jdk.home.1.6" value="${env.JAVA_HOME}"/>
+  
+  <!-- <property file="build.properties"/> -->
+  <!-- Uncomment the following property if no tests compilation is needed -->
+  <!-- 
+  <property name="skip.tests" value="true"/>
+   -->
+  
+  <!-- Compiler options -->
+  
+  <property name="compiler.debug" value="on"/>
+  <property name="compiler.generate.no.warnings" value="off"/>
+  <property name="compiler.args" value=""/>
+  <property name="compiler.max.memory" value="128m"/>
+  <patternset id="ignored.files">
+    <exclude name="**/CVS/**"/>
+    <exclude name="**/SCCS/**"/>
+    <exclude name="**/RCS/**"/>
+    <exclude name="**/rcs/**"/>
+    <exclude name="**/.DS_Store/**"/>
+    <exclude name="**/.svn/**"/>
+    <exclude name="**/.pyc/**"/>
+    <exclude name="**/.pyo/**"/>
+    <exclude name="**/*.pyc/**"/>
+    <exclude name="**/*.pyo/**"/>
+    <exclude name="**/.git/**"/>
+    <exclude name="**/*.hprof/**"/>
+    <exclude name="**/_svn/**"/>
+    <exclude name="**/.hg/**"/>
+    <exclude name="**/*.lib/**"/>
+    <exclude name="**/*~/**"/>
+    <exclude name="**/__pycache__/**"/>
+    <exclude name="**/.bundle/**"/>
+    <exclude name="**/*.rbc/**"/>
+    <exclude name="**/*.o/**"/>
+    <exclude name="**/*.obj/**"/>
+  </patternset>
+  <patternset id="library.patterns">
+    <include name="*.zip"/>
+    <include name="*.apk"/>
+    <include name="*.war"/>
+    <include name="*.egg"/>
+    <include name="*.ear"/>
+    <include name="*.ane"/>
+    <include name="*.swc"/>
+    <include name="*.jar"/>
+  </patternset>
+  <patternset id="compiler.resources">
+    <include name="**/?*.properties"/>
+    <include name="**/?*.xml"/>
+    <include name="**/?*.gif"/>
+    <include name="**/?*.png"/>
+    <include name="**/?*.jpeg"/>
+    <include name="**/?*.jpg"/>
+    <include name="**/?*.html"/>
+    <include name="**/?*.dtd"/>
+    <include name="**/?*.tld"/>
+    <include name="**/?*.ftl"/>
+  </patternset>
+  
+  <!-- JDK definitions -->
+  
+  <property name="jdk.bin.1.6" value="${jdk.home.1.6}/bin"/>
+  <path id="jdk.classpath.1.6">
+    <fileset dir="${jdk.home.1.6}">
+      <include name="lib/deploy.jar"/>
+      <include name="lib/dt.jar"/>
+      <include name="lib/javaws.jar"/>
+      <include name="lib/jce.jar"/>
+      <include name="lib/jconsole.jar"/>
+      <include name="lib/management-agent.jar"/>
+      <include name="lib/plugin.jar"/>
+      <include name="lib/sa-jdi.jar"/>
+      <include name="../Classes/charsets.jar"/>
+      <include name="../Classes/classes.jar"/>
+      <include name="../Classes/jsse.jar"/>
+      <include name="../Classes/ui.jar"/>
+      <include name="lib/ext/apple_provider.jar"/>
+      <include name="lib/ext/dnsns.jar"/>
+      <include name="lib/ext/localedata.jar"/>
+      <include name="lib/ext/sunjce_provider.jar"/>
+      <include name="lib/ext/sunpkcs11.jar"/>
+    </fileset>
+  </path>
+  
+  <property name="project.jdk.home" value="${jdk.home.1.6}"/>
+  <property name="project.jdk.bin" value="${jdk.bin.1.6}"/>
+  <property name="project.jdk.classpath" value="jdk.classpath.1.6"/>
+  
+  
+  <!-- Project Libraries -->
+  
+  <path id="library.lib.classpath">
+    <fileset dir="${basedir}/lib">
+      <patternset refid="library.patterns"/>
+    </fileset>
+  </path>
+  
+  <!-- Modules -->
+  
+  
+  <!-- Module AutoConf -->
+  
+  <dirname property="module.autoconf.basedir" file="${ant.file}"/>
+  
+  
+  <property name="module.jdk.home.autoconf" value="${project.jdk.home}"/>
+  <property name="module.jdk.bin.autoconf" value="${project.jdk.bin}"/>
+  <property name="module.jdk.classpath.autoconf" value="${project.jdk.classpath}"/>
+  
+  <property name="compiler.args.autoconf" value="${compiler.args}"/>
+  
+  <property name="autoconf.output.dir" value="${module.autoconf.basedir}/build/production/AutoConf"/>
+  <property name="autoconf.testoutput.dir" value="${module.autoconf.basedir}/build/test/AutoConf"/>
+  
+  <path id="autoconf.module.bootclasspath">
+    <!-- Paths to be included in compilation bootclasspath -->
+  </path>
+  
+  <path id="autoconf.module.production.classpath">
+    <path refid="${module.jdk.classpath.autoconf}"/>
+    <path refid="library.lib.classpath"/>
+  </path>
+  
+  <path id="autoconf.runtime.production.module.classpath">
+    <pathelement location="${autoconf.output.dir}"/>
+    <path refid="library.lib.classpath"/>
+  </path>
+  
+  <path id="autoconf.module.classpath">
+    <path refid="${module.jdk.classpath.autoconf}"/>
+    <pathelement location="${autoconf.output.dir}"/>
+    <path refid="library.lib.classpath"/>
+  </path>
+  
+  <path id="autoconf.runtime.module.classpath">
+    <pathelement location="${autoconf.testoutput.dir}"/>
+    <pathelement location="${autoconf.output.dir}"/>
+    <path refid="library.lib.classpath"/>
+  </path>
+  
+  
+  <patternset id="excluded.from.module.autoconf">
+    <patternset refid="ignored.files"/>
+  </patternset>
+  
+  <patternset id="excluded.from.compilation.autoconf">
+    <patternset refid="excluded.from.module.autoconf"/>
+  </patternset>
+  
+  <path id="autoconf.module.sourcepath">
+    <dirset dir="${module.autoconf.basedir}">
+      <include name="src"/>
+    </dirset>
+  </path>
+  
+  
+  <target name="compile.module.autoconf" depends="compile.module.autoconf.production,compile.module.autoconf.tests" description="Compile module AutoConf"/>
+  
+  <target name="compile.module.autoconf.production" description="Compile module AutoConf; production classes">
+    <mkdir dir="${autoconf.output.dir}"/>
+    <javac destdir="${autoconf.output.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true" executable="${module.jdk.bin.autoconf}/javac">
+      <compilerarg line="${compiler.args.autoconf}"/>
+      <bootclasspath refid="autoconf.module.bootclasspath"/>
+      <classpath refid="autoconf.module.production.classpath"/>
+      <src refid="autoconf.module.sourcepath"/>
+      <patternset refid="excluded.from.compilation.autoconf"/>
+    </javac>
+    
+    <copy todir="${autoconf.output.dir}">
+      <fileset dir="${module.autoconf.basedir}/src">
+        <patternset refid="compiler.resources"/>
+        <type type="file"/>
+      </fileset>
+    </copy>
+  </target>
+  
+  <target name="compile.module.autoconf.tests" depends="compile.module.autoconf.production" description="compile module AutoConf; test classes" unless="skip.tests"/>
+  
+  <target name="clean.module.autoconf" description="cleanup module">
+    <delete dir="${autoconf.output.dir}"/>
+    <delete dir="${autoconf.testoutput.dir}"/>
+  </target>
+  
+  <target name="init" description="Build initialization">
+    <!-- Perform any build initialization in this target -->
+  </target>
+  
+  <target name="clean" depends="clean.module.autoconf" description="cleanup all"/>
+  
+  <target name="build.modules" depends="init, clean, compile.module.autoconf" description="build all modules"/>
+  
+  <target name="init.artifacts">
+    <property name="artifacts.temp.dir" value="${basedir}/__artifacts_temp"/>
+    <property name="artifact.output.autoconf-alpha" value="${basedir}/build"/>
+    <mkdir dir="${artifacts.temp.dir}"/>
+    <property name="temp.jar.path.autoconf-0.1.jar" value="${artifacts.temp.dir}/autoconf-0.1.jar"/>
+  </target>
+  
+  <target name="artifact.autoconf-alpha" depends="init.artifacts, compile.module.autoconf" description="Build &#39;AutoConf-ALPHA&#39; artifact">
+    <property name="artifact.temp.output.autoconf-alpha" value="${artifacts.temp.dir}/AutoConf_ALPHA"/>
+    <mkdir dir="${artifact.temp.output.autoconf-alpha}"/>
+    <jar destfile="${temp.jar.path.autoconf-0.1.jar}" duplicate="preserve" filesetmanifest="mergewithoutmain">
+      <zipfileset file="${basedir}/src/META-INF/MANIFEST.MF" prefix="META-INF"/>
+      <zipfileset dir="${autoconf.output.dir}"/>
+    </jar>
+    <copy file="${temp.jar.path.autoconf-0.1.jar}" tofile="${artifact.temp.output.autoconf-alpha}/autoconf-0.1.jar"/>
+  </target>
+  
+  <target name="build.all.artifacts" depends="artifact.autoconf-alpha" description="Build all artifacts">
+    <mkdir dir="${artifact.output.autoconf-alpha}"/>
+    <copy todir="${artifact.output.autoconf-alpha}">
+      <fileset dir="${artifact.temp.output.autoconf-alpha}"/>
+    </copy>
+    
+    <!-- Delete temporary files -->
+    <delete dir="${artifacts.temp.dir}"/>
+  </target>
+  
+  <target name="all" depends="build.modules, build.all.artifacts" description="build all"/>
+</project>
