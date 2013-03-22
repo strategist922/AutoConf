@@ -39,8 +39,6 @@ import java.util.Properties;
  */
 public class AutoConfCtl {
   static Properties resources = new Properties();
-  static int port = 50123;
-  static String lookup = "//localhost/AutoConf";
   static String confFile = null;
   static String jobName = null;
 
@@ -51,10 +49,7 @@ public class AutoConfCtl {
 
     Registry registry = LocateRegistry.getRegistry(rmiconfig.getProperty("RMI_SERVER"), 50123);
     System.out.println("AutoConf: Connecting to AutoConf server at " + rmiconfig.getProperty("RMI_SERVER"));
-    AutoConf autoConf = (AutoConf) registry.lookup("//" + rmiconfig.getProperty("RMI_SERVER") + "/AutoConf");
-    in.close();
-
-    return (AutoConf) registry.lookup(lookup);
+    return (AutoConf) registry.lookup("//" + rmiconfig.getProperty("RMI_SERVER") + "/AutoConf");
   }
 
   public static void loadConfigFromFile(String file) {
