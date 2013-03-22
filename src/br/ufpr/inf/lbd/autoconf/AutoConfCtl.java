@@ -23,10 +23,13 @@ import com.sun.org.apache.xalan.internal.xsltc.cmdline.getopt.GetOptsException;
 import org.apache.hadoop.conf.Configuration;
 
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
+import java.rmi.server.UnicastRemoteObject;
 import java.util.Properties;
 
 /**
@@ -41,8 +44,16 @@ public class AutoConfCtl {
   static String confFile = null;
   static String jobName = null;
 
-  private static AutoConf getAutoConfRMIServer () throws RemoteException, NotBoundException {
-    Registry registry = LocateRegistry.getRegistry(port);
+  private static AutoConf getAutoConfRMIServer () throws IOException, NotBoundException {
+    Properties rmiconfig = new Properties();
+    FileInputStream in = new FileInputStream("/tmp/autoconf.conf");
+    rmiconfig.load(in);
+
+    Registry registry = LocateRegistry.getRegistry(rmiconfig.getProperty("RMI_SERVER"), 50123);
+    System.out.println("AutoConf: Connecting to AutoConf server at " + rmiconfig.getProperty("RMI_SERVER"));
+    AutoConf autoConf = (AutoConf) registry.lookup("//" + rmiconfig.getProperty("RMI_SERVER") + "/AutoConf");
+    in.close();
+
     return (AutoConf) registry.lookup(lookup);
   }
 
@@ -70,7 +81,7 @@ public class AutoConfCtl {
     System.out.println("autoconfctl -s\tThis help.");
   }
 
-  private static void add() throws NotBoundException, RemoteException {
+  private static void add() throws NotBoundException, RemoteException, IOException {
       AutoConf autoConf = getAutoConfRMIServer();
       Configuration conf = new Configuration();
       loadConfigFromFile(confFile);
@@ -81,7 +92,7 @@ public class AutoConfCtl {
       }
   }
 
-  private static void update() throws NotBoundException, RemoteException {
+  private static void update() throws NotBoundException, RemoteException, IOException {
       AutoConf autoConf = getAutoConfRMIServer();
       Configuration conf = new Configuration();
       loadConfigFromFile(confFile);
@@ -92,7 +103,7 @@ public class AutoConfCtl {
       }
   }
 
-  private static void remove() throws NotBoundException, RemoteException {
+  private static void remove() throws NotBoundException, RemoteException, IOException {
       AutoConf autoConf = getAutoConfRMIServer();
       Configuration conf = new Configuration(false);
       TuningKnobs newconf = new TuningKnobs(jobName, conf);
@@ -102,7 +113,7 @@ public class AutoConfCtl {
       }
   }
 
-  private static void print() throws RemoteException, NotBoundException {
+  private static void print() throws RemoteException, NotBoundException, IOException {
     if (jobName == null) {
       System.out.println("AutoConf: Please, specify the JobName with option -j.");
       System.exit(-1);
@@ -114,7 +125,7 @@ public class AutoConfCtl {
     autoConf.show(newconf);
   }
 
-  private static void list() throws RemoteException, NotBoundException {
+  private static void list() throws RemoteException, NotBoundException, IOException {
     AutoConf autoConf = getAutoConfRMIServer();
     autoConf.list();
   }
