@@ -63,7 +63,7 @@ public class AutoConfImpl implements AutoConf {
 
     try {
       Properties rmiconfig = new Properties();
-      FileInputStream in = new FileInputStream("autoconf.conf");
+      FileInputStream in = new FileInputStream("/tmp/autoconf.conf");
       rmiconfig.load(in);
 
       AutoConfImpl server = new AutoConfImpl();
