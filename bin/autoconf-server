@@ -21,9 +21,7 @@
 . "$(dirname $(which $0))/setenv"
 
 echo "******************************************************"
-echo "* Attention: This is an Alpha version!"
-echo "* Attention: Do not restart it when Hadoop is running!"
-echo "* Attention: Because if you do, Hadoop crashes :)"
+echo "* Attention: This is an alpha version of AutoConf!"
 echo "* For more information, github.com/erlfilho/autoconf/"
 echo
 
