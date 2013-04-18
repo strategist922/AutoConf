@@ -62,8 +62,10 @@ public class AutoConfImpl implements AutoConf {
       System.setSecurityManager(new RMISecurityManager());
 
     try {
+      String home = System.getenv("AUTOCONF_HOME");
+
       Properties rmiconfig = new Properties();
-      FileInputStream in = new FileInputStream("/tmp/autoconf.conf");
+      FileInputStream in = new FileInputStream(home + "/autoconf.conf");
       rmiconfig.load(in);
 
       AutoConfImpl server = new AutoConfImpl();
