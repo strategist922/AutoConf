@@ -26,6 +26,7 @@ public interface AutoConf extends Remote {
   boolean add(TuningKnobs tuningKnobs) throws RemoteException;
   boolean remove(TuningKnobs tuningKnobs) throws RemoteException;
   boolean update(TuningKnobs tuningKnobs) throws RemoteException;
+  void startServer() throws RemoteException;
   void list() throws RemoteException;
   void show(TuningKnobs tuningKnobs) throws  RemoteException;
 }
