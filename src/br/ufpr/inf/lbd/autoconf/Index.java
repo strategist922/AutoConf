@@ -36,7 +36,7 @@ public class Index {
     TuningKnobs a;
     String name = k.getJobName().split(" ")[0];
 
-    if (!k.getJobName().matches("no-name")) {
+    if (!k.getJobName().matches("unknown")) {
       System.out.println(" *** AutoConf: Configuring " + name);
     }
 
@@ -46,9 +46,9 @@ public class Index {
       return a;
     } else {
       // Uncomment the lines below in case
-      // you want jobs writing the TuningKnobs.resources
-      //optimize(k);
-      //tree.put(name, k);
+      // you want jobs writing the TuningKnobs.knobs
+      // optimize(k);
+      // tree.put(name, k);
       return k;
     }
   }
@@ -92,13 +92,12 @@ public class Index {
       System.out.println("AutoConf: List: The following jobs are indexed.");
       for (Iterator i = set.iterator(); i.hasNext();){
         String jobName = (String) i.next();
-        System.out.println(" +++ " + jobName + " has " + tree.get(jobName).getResources().size() + " tuned knobs.");
+        System.out.println(" +++ " + jobName + " has " + tree.get(jobName).getKnobs().size() + " tuned knobs.");
       }
     }
   }
 
   public void show(TuningKnobs k) {
-    System.out.println(k.getJobName());
     if (tree.containsKey(k.getJobName())) {
       TuningKnobs tuningKnobs = tree.get(k.getJobName());
       tuningKnobs.showConfiguration();
