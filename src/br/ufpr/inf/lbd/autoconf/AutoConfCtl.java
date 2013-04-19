@@ -134,8 +134,11 @@ public class AutoConfCtl {
     confFile = file;
   }
 
-  private static void startServer() throws RemoteException {
-    AutoConfImpl server = new AutoConfImpl();
+  private static void startServer() throws IOException, NotBoundException {
+    AutoConfImpl autoConf = new AutoConfImpl();
+    Thread server = new Thread(autoConf);
+    server.setDaemon(true);
+    server.run();
   }
 
   public static void main(String[] args) throws GetOptsException {
