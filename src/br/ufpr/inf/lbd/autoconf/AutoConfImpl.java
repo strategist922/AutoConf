@@ -30,6 +30,10 @@ public class AutoConfImpl implements AutoConf {
   Index index;
 
   public AutoConfImpl() throws RemoteException {
+    createIndex();
+  }
+
+  public void createIndex() {
     this.index = new Index();
   }
 
