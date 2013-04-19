@@ -44,7 +44,8 @@ public class AutoConfCtl {
 
   private static AutoConf getAutoConfRMIServer () throws IOException, NotBoundException {
     Properties rmiconfig = new Properties();
-    FileInputStream in = new FileInputStream("/tmp/autoconf.conf");
+    String home = System.getenv("AUTOCONF_HOME");
+    FileInputStream in = new FileInputStream(home + "/autoconf.conf");
     rmiconfig.load(in);
 
     Registry registry = LocateRegistry.getRegistry(rmiconfig.getProperty("RMI_SERVER"), 50123);
