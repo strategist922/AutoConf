@@ -26,7 +26,7 @@ import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.Properties;
 
-public class AutoConfImpl implements AutoConf {
+public class AutoConfImpl extends Thread implements AutoConf  {
   Index index;
 
   public AutoConfImpl() throws RemoteException {
@@ -61,7 +61,7 @@ public class AutoConfImpl implements AutoConf {
     index.show(k);
   }
 
-  public static void main(String args[]) {
+  public void startServer() {
     if (System.getSecurityManager() == null)
       System.setSecurityManager(new RMISecurityManager());
 
@@ -83,5 +83,18 @@ public class AutoConfImpl implements AutoConf {
       System.err.println("AutoConf error: " + e.getMessage());
       e. printStackTrace();
     }
+  }
+
+  public void run() {
+    System.out.println("* Lauching AutoConf Server...");
+    try {
+      (new AutoConfImpl()).startServer();
+    } catch (RemoteException e) {
+      e.printStackTrace();
+    }
+  }
+
+  public static void main(String args[]) throws RemoteException {
+    (new AutoConfImpl()).startServer();
   }
 }
