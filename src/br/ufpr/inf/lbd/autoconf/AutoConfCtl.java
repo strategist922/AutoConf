@@ -45,10 +45,11 @@ public class AutoConfCtl {
   private static AutoConf getAutoConfRMIServer () throws IOException, NotBoundException {
     Properties rmiconfig = new Properties();
     String home = System.getenv("AUTOCONF_HOME");
+    String port = System.getenv("AUTOCONF_PORT");
     FileInputStream in = new FileInputStream(home + "/autoconf.conf");
     rmiconfig.load(in);
 
-    Registry registry = LocateRegistry.getRegistry(rmiconfig.getProperty("RMI_SERVER"), 50123);
+    Registry registry = LocateRegistry.getRegistry(rmiconfig.getProperty("RMI_SERVER"), Integer.parseInt(port));
     System.out.println("AutoConf: Connecting to AutoConf server at " + rmiconfig.getProperty("RMI_SERVER"));
     return (AutoConf) registry.lookup("//" + rmiconfig.getProperty("RMI_SERVER") + "/AutoConf");
   }
