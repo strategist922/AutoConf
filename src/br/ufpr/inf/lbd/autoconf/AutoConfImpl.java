@@ -67,14 +67,14 @@ public class AutoConfImpl extends Thread implements AutoConf  {
 
     try {
       String home = System.getenv("AUTOCONF_HOME");
-
+      String port = System.getenv("AUTOCONF_PORT");
       Properties rmiconfig = new Properties();
       FileInputStream in = new FileInputStream(home + "/autoconf.conf");
       rmiconfig.load(in);
 
       AutoConfImpl server = new AutoConfImpl();
       AutoConf stub = (AutoConf) UnicastRemoteObject.exportObject(server, 0);
-      Registry registry = LocateRegistry.createRegistry(50123);
+      Registry registry = LocateRegistry.createRegistry(Integer.parseInt(port));
       registry.rebind("//" + rmiconfig.getProperty("RMI_SERVER") + "/AutoConf", stub);
       in.close();
 
