@@ -44,7 +44,7 @@ if test -z ${JAVA_HOME}; then
 	echo "error: JAVA_HOME is not set."
 	exit 0
 else
-	export JAVA_HOME_${JAVA_HOME} 
+	export JAVA_HOME=${JAVA_HOME}
 fi
 
 ## Saving OSTYPE for further needs
