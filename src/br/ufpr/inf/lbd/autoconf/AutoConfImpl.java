@@ -75,7 +75,7 @@ public class AutoConfImpl extends Thread implements AutoConf  {
       Properties rmiconfig = new Properties();
       FileInputStream in = new FileInputStream(home + "/autoconf.conf");
       rmiconfig.load(in);
-      String host = rmiconfig.getProperty("RMI_SERVER");
+      String host = rmiconfig.getProperty("AUTOCONF_HOST");
       String port = rmiconfig.getProperty("AUTOCONF_PORT");
 
       AutoConfImpl server = new AutoConfImpl();
