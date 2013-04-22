@@ -67,28 +67,24 @@ public class AutoConfImpl extends Thread implements AutoConf  {
 
     try {
       String home = System.getenv("AUTOCONF_HOME");
-      String port = System.getenv("AUTOCONF_PORT");
-      Properties rmiconfig = new Properties();
-      FileInputStream in = new FileInputStream(home + "/autoconf.conf");
-      rmiconfig.load(in);
-
       if (home == null) {
         System.out.println("AutoConf: error: AUTOCONF_HOME not set.");
         System.exit(-1);
       }
 
-      if (port == null) {
-        System.out.println("AutoConf: error: AUTOCONF_PORT not set.");
-        System.exit(-1);
-      }
+      Properties rmiconfig = new Properties();
+      FileInputStream in = new FileInputStream(home + "/autoconf.conf");
+      rmiconfig.load(in);
+      String host = rmiconfig.getProperty("RMI_SERVER");
+      String port = rmiconfig.getProperty("AUTOCONF_PORT");
 
       AutoConfImpl server = new AutoConfImpl();
       AutoConf stub = (AutoConf) UnicastRemoteObject.exportObject(server, 0);
       Registry registry = LocateRegistry.createRegistry(Integer.parseInt(port));
-      registry.rebind("//" + rmiconfig.getProperty("RMI_SERVER") + "/AutoConf", stub);
+      registry.rebind("//" + host + "/AutoConf", stub);
       in.close();
 
-      System.out.println("* AutoConf server is running at " +  rmiconfig.getProperty("RMI_SERVER") + ".");
+      System.out.println("* AutoConf server is running at " +  host + ":" + port);
     } catch (Exception e) {
       System.err.println("AutoConf error: " + e.getMessage());
       e. printStackTrace();
@@ -96,6 +92,7 @@ public class AutoConfImpl extends Thread implements AutoConf  {
   }
 
   public void run() {
+    System.out.println("* Lauching AutoConf Server...");
     try {
       (new AutoConfImpl()).startServer();
     } catch (RemoteException e) {
