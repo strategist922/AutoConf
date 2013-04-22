@@ -20,6 +20,9 @@
 AUTOCONF_CLASS="br.ufpr.inf.lbd.autoconf.AutoConfCtl"
 
 ## Load configuration
+. "$(dirname $(which $0))/../autoconf.conf"
+
+## Set env
 . "$(dirname $(which $0))/setenv"
 
 exec ${JAVA_CMD} ${JAVA_OPTS} "-classpath" "${AUTOCONF_CLASSPATH}" ${AUTOCONF_CLASS} ${*}
