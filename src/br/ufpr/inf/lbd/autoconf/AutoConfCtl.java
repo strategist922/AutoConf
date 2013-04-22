@@ -43,15 +43,21 @@ public class AutoConfCtl {
   static String jobName = null;
 
   private static AutoConf getAutoConfRMIServer () throws IOException, NotBoundException {
-    Properties rmiconfig = new Properties();
     String home = System.getenv("AUTOCONF_HOME");
-    String port = System.getenv("AUTOCONF_PORT");
+    if (home == null) {
+      System.out.println("AutoConf: error: AUTOCONF_HOME not set.");
+      System.exit(-1);
+    }
+
+    Properties rmiconfig = new Properties();
     FileInputStream in = new FileInputStream(home + "/autoconf.conf");
     rmiconfig.load(in);
+    String host = rmiconfig.getProperty("AUTOCONF_HOST");
+    String port = rmiconfig.getProperty("AUTOCONF_PORT");
 
-    Registry registry = LocateRegistry.getRegistry(rmiconfig.getProperty("RMI_SERVER"), Integer.parseInt(port));
-    System.out.println("AutoConf: Connecting to AutoConf server at " + rmiconfig.getProperty("RMI_SERVER"));
-    return (AutoConf) registry.lookup("//" + rmiconfig.getProperty("RMI_SERVER") + "/AutoConf");
+    Registry registry = LocateRegistry.getRegistry(host, Integer.parseInt(port));
+    System.out.println("AutoConf: Connecting to AutoConf server at " + host+":"+port);
+    return (AutoConf) registry.lookup("//" + host + "/AutoConf");
   }
 
   public static void loadConfigFromFile(String file) {
