@@ -39,7 +39,6 @@ public class TuningKnobs implements Serializable {
   public TuningKnobs(Configuration conf) {
     /* Jar file */
     JobConf j = (JobConf) conf;
-    System.out.println("-->>> "+ j.getJar());
     setJarFile(j.getJar());
     
     /* Mapper Class */
@@ -128,9 +127,10 @@ public class TuningKnobs implements Serializable {
   }
 
   public void showConfiguration () {
+    System.out.println("\n");
     System.out.println(" *** JobName :: " + getJobName());
-    System.out.println(" *** Knobs   :: " + getKnobs().size());
     System.out.println(" *** JarFile :: " + getJarFile() );
+    System.out.println(" *** Knobs   :: " + getKnobs().size());
 
     if (getMapperName() != null)
       System.out.println(" *** Mapper  :: " + getMapperName().getName());
@@ -138,12 +138,12 @@ public class TuningKnobs implements Serializable {
       System.out.println(" *** Reducer :: " + getReducerName().getName());
 
     /* show the tuning knobs */
-    System.out.println(" *** Tuning Knobs");
+    System.out.println(" *** Knobs   :: " + getKnobs().size());
     Enumeration e = knobs.propertyNames();
     while (e.hasMoreElements()) {
       String key = (String) e.nextElement();
       System.out.println("    " + key + " = " + knobs.getProperty(key));
     }
-
+    System.out.println("\n");
   }
 }
