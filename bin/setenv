@@ -19,8 +19,6 @@
 if test -z ${HADOOP_HOME}; then
 	echo "error: Please, configure HADOOP_HOME."
 	exit 0
-else
-	export HADOOP_HOME=${HADOOP_HOME}
 fi
 
 ## Check if AUTOCONF_HOME is set
@@ -28,6 +26,8 @@ if test -z ${AUTOCONF_HOME}; then
 	echo "error: Please, configure AUTOCONF_HOME in autoconf.conf."
 	exit 0
 else
+	# Necessary to make AUTOCONF_HOME available
+	# to all subprocess of AutoConf
 	export AUTOCONF_HOME=${AUTOCONF_HOME}
 fi
 
@@ -35,16 +35,12 @@ fi
 if test -z ${AUTOCONF_PORT}; then
 	echo "error: Please, configure AUTOCONF_PORT in autoconf.conf."
 	exit 0
-else
-	export AUTOCONF_PORT=${AUTOCONF_PORT}
 fi
 
 ## Check if JAVA_HOME is set
 if test -z ${JAVA_HOME}; then
 	echo "error: JAVA_HOME is not set."
 	exit 0
-else
-	export JAVA_HOME=${JAVA_HOME}
 fi
 
 ## Saving OSTYPE for further needs
