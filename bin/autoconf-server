@@ -17,7 +17,12 @@
 # limitations under the License.
 #
 
+AUTOCONF_CLASS="br.ufpr.inf.lbd.autoconf.AutoConfImpl"
+
 ## Load configuration
+. "$(dirname $(which $0))/../autoconf.conf"
+
+## Set env
 . "$(dirname $(which $0))/setenv"
 
 echo "******************************************************"
