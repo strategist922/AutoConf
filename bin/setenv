@@ -32,6 +32,12 @@ if test -z ${AUTOCONF_HOME}; then
 	exit 0
 fi
 
+## Check if AUTOCONF_PORT is set
+if test -z ${AUTOCONF_PORT}; then
+	echo "error: Please, configure AUTOCONF_PORT in autoconf.conf."
+	exit 0
+fi
+
 ## Check if JAVA_HOME is set
 if test -z ${JAVA_HOME}; then
 	echo "error: JAVA_HOME is not set."
