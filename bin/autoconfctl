@@ -17,9 +17,9 @@
 # limitations under the License.
 #
 
+AUTOCONF_CLASS="br.ufpr.inf.lbd.autoconf.AutoConfCtl"
+
 ## Load configuration
 . "$(dirname $(which $0))/setenv"
-
-AUTOCONF_CLASS="br.ufpr.inf.lbd.autoconf.AutoConfCtl"
 
 exec ${JAVA_CMD} ${JAVA_OPTS} "-classpath" "${AUTOCONF_CLASSPATH}" ${AUTOCONF_CLASS} ${*}
