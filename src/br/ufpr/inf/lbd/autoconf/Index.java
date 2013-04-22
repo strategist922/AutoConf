@@ -32,24 +32,23 @@ public class Index {
 
   /* TODO: This add should lock the tree to add new knobs
    *       Translates TuningKnobs to Configuration */
-  public TuningKnobs getTunedKnobs(TuningKnobs k) {
-    TuningKnobs a;
-    String name = k.getJobName().split(" ")[0];
-
-    if (!k.getJobName().matches("unknown")) {
-      System.out.println(" *** AutoConf: Configuring " + name);
+  public TuningKnobs getTunedKnobs(TuningKnobs tKnobs) {
+    String name = tKnobs.getJobName().split(" ")[0];
+    if (!tKnobs.getJobName().matches("unknown")) {
+      tKnobs.showConfiguration();
     }
 
     if (tree.containsKey(name)) {
-      a = tree.get(name);
-      a.setJobName(k.getJobName());
-      return a;
+      TuningKnobs knobs;
+      knobs = tree.get(name);
+      knobs.setJobName(tKnobs.getJobName());
+      return knobs;
     } else {
       // Uncomment the lines below in case
       // you want jobs writing the TuningKnobs.knobs
       // optimize(k);
       // tree.put(name, k);
-      return k;
+      return tKnobs;
     }
   }
 
