@@ -72,6 +72,16 @@ public class AutoConfImpl extends Thread implements AutoConf  {
       FileInputStream in = new FileInputStream(home + "/autoconf.conf");
       rmiconfig.load(in);
 
+      if (home == null) {
+        System.out.println("AutoConf: error: AUTOCONF_HOME not set.");
+        System.exit(-1);
+      }
+
+      if (port == null) {
+        System.out.println("AutoConf: error: AUTOCONF_PORT not set.");
+        System.exit(-1);
+      }
+
       AutoConfImpl server = new AutoConfImpl();
       AutoConf stub = (AutoConf) UnicastRemoteObject.exportObject(server, 0);
       Registry registry = LocateRegistry.createRegistry(Integer.parseInt(port));
