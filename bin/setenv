@@ -55,7 +55,6 @@ case ${OSTYPE} in
 esac
 
 ## AutoConf
-AUTOCONF_CLASS="br.ufpr.inf.lbd.autoconf.AutoConfImpl"
 AUTOCONF_JAR="${AUTOCONF_HOME}/build/autoconf-0.1.jar"
 AUTOCONF_LIB="${AUTOCONF_HOME}/lib"
 AUTOCONF_CLASSPATH=".:${CLASSPATH}:${AUTOCONF_LIB}/*:${AUTOCONF_HOME}/build/*:${HADOOP_HOME}/lib/*:${HADOOP_HOME}/*"
