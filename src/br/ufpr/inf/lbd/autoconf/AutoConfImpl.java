@@ -92,7 +92,6 @@ public class AutoConfImpl extends Thread implements AutoConf  {
   }
 
   public void run() {
-    System.out.println("* Lauching AutoConf Server...");
     try {
       (new AutoConfImpl()).startServer();
     } catch (RemoteException e) {
