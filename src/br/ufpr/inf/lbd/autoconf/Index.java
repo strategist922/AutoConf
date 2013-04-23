@@ -18,6 +18,7 @@
 
 package br.ufpr.inf.lbd.autoconf;
 
+import java.lang.reflect.Method;
 import java.util.Iterator;
 import java.util.Set;
 import java.util.TreeMap;
@@ -25,17 +26,21 @@ import java.util.TreeMap;
 public class Index {
   static TreeMap<String, TuningKnobs> tree = new TreeMap<String, TuningKnobs>();
 
-  /* TODO: Optimize Job Configuration */
-  public TuningKnobs optimize(TuningKnobs k) {
-    return k;
-  }
-
   /* TODO: This add should lock the tree to add new knobs
    *       Translates TuningKnobs to Configuration */
   public TuningKnobs getTunedKnobs(TuningKnobs tKnobs) {
     String name = tKnobs.getJobName().split(" ")[0];
     if (!tKnobs.getJobName().matches("unknown")) {
       tKnobs.showConfiguration();
+      System.out.println(" *** Mapper Methods");
+      for (Method m : tKnobs.getMapperName().getMethods()) {
+        System.out.println(" --- Method Name .. " + m.getName());
+      }
+
+      System.out.println(" *** Reducer Methods");
+      for (Method m : tKnobs.getReducerName().getMethods()) {
+        System.out.println(" --- Method Name .. " + m.getName());
+      }
     }
 
     if (tree.containsKey(name)) {
