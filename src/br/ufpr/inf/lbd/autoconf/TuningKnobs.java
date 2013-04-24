@@ -19,31 +19,41 @@
 package br.ufpr.inf.lbd.autoconf;
 
 import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.fs.FileStatus;
+import org.apache.hadoop.fs.FileSystem;
+import org.apache.hadoop.fs.FileUtil;
+import org.apache.hadoop.fs.Path;
+import org.apache.hadoop.mapred.FileInputFormat;
 import org.apache.hadoop.mapred.JobConf;
 import org.apache.hadoop.mapred.Mapper;
 import org.apache.hadoop.mapred.Reducer;
+import org.apache.hadoop.util.StringUtils;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.Serializable;
-import java.util.Enumeration;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Properties;
+import java.util.*;
 
 public class TuningKnobs implements Serializable {
   String jobName = "unknown";
   String jarFile = "unknown";
+  long inputSize = 0;
+  HashMap<String, Long> InputData = new HashMap<String, Long>();
   Properties knobs = new Properties();
   Class<? extends Mapper> mapperClass = null;
   Class<? extends Reducer> reducerClass = null;
 
-  public TuningKnobs(Configuration conf) {
+  public TuningKnobs(Configuration conf) throws IOException {
     /* Jar file */
     JobConf j = (JobConf) conf;
     setJarFile(j.getJar());
-    
+
+    /* Input Size */
+    setInputSize(conf);
+
     /* Mapper Class */
     setMapperName(j.getMapperClass());
-    
+
     /* Reducer Class */
     setReducerName(j.getReducerClass());
 
@@ -69,7 +79,7 @@ public class TuningKnobs implements Serializable {
   }
 
   public void setJobName(String name) {
-    if (name != null)  {
+    if (name != null) {
       this.jobName = name;
     }
   }
@@ -102,6 +112,60 @@ public class TuningKnobs implements Serializable {
     return this.jarFile;
   }
 
+  public HashMap<String, Long> getInputData() {
+    return InputData;
+  }
+
+  public long getInputSize() {
+    return inputSize;
+  }
+
+  public void setInputSize(long inputSize) {
+    this.inputSize = inputSize;
+  }
+
+
+  void setInputSize(Configuration conf) throws IOException {
+    String src = "";
+    Path paths[] = FileInputFormat.getInputPaths((JobConf)conf);
+    for (Path p : paths) {
+      String d[] = p.toString().split("//");
+      if (d.length<1) return;
+
+      String dirs[] = d[1].split("/");
+      if (dirs.length<1) return;
+
+      for (int i=1; i<dirs.length; i++) {
+        src = src + "/" + dirs[i];
+      }
+    }
+
+    if (src.isEmpty()) {
+       System.out.println(" *** AutoConf: Input path not found. ");
+       return;
+    }
+
+    Path srcPath = new Path(src);
+    FileSystem srcFs = srcPath.getFileSystem(conf);
+    Path[] pathItems = FileUtil.stat2Paths(srcFs.globStatus(srcPath), srcPath);
+    FileStatus items[] = srcFs.listStatus(pathItems);
+
+    if ((items == null) || ((items.length == 0) && (!srcFs.exists(srcPath)))) {
+      throw new FileNotFoundException("Cannot access " + src + ": No such file or directory.");
+    } else {
+      long length[] = new long[items.length];
+      for (int i = 0; i < items.length; i++) {
+        length[i] = items[i].isDir() ? srcFs.getContentSummary(items[i].getPath()).getLength() : items[i].getLen();
+        int len = String.valueOf(length[i]).length();
+      }
+
+      for (int i = 0; i < items.length; i++) {
+        InputData.put(items[i].getPath().toString(), length[i]);
+        inputSize += length[i];
+      }
+    }
+  }
+
   private void saveTuningKnobs(Configuration conf) {
     System.out.println("AutoConf: There are " + conf.size() + " knobs available.");
     Iterator i = conf.iterator();
@@ -126,11 +190,19 @@ public class TuningKnobs implements Serializable {
     }
   }
 
-  public void showConfiguration () {
+  public void showConfiguration() {
     System.out.println("\n");
     System.out.println(" *** JobName :: " + getJobName());
-    System.out.println(" *** JarFile :: " + getJarFile() );
-    System.out.println(" *** Knobs   :: " + getKnobs().size());
+    System.out.println(" *** JarFile :: " + getJarFile());
+
+    HashMap<String, Long> m = getInputData();
+    Iterator i = m.entrySet().iterator();
+    while (i.hasNext()) {
+      Map.Entry inputData = (Map.Entry) i.next();
+      System.out.println(" *** Input data  :: " + inputData.getValue() + " " + inputData.getKey());
+    }
+
+    System.out.println(" *** Total input size :: " + getInputSize());
 
     if (getMapperName() != null)
       System.out.println(" *** Mapper  :: " + getMapperName().getName());
@@ -138,12 +210,14 @@ public class TuningKnobs implements Serializable {
       System.out.println(" *** Reducer :: " + getReducerName().getName());
 
     /* show the tuning knobs */
-    System.out.println(" *** Knobs   :: " + getKnobs().size());
-    Enumeration e = knobs.propertyNames();
-    while (e.hasMoreElements()) {
-      String key = (String) e.nextElement();
-      System.out.println("    " + key + " = " + knobs.getProperty(key));
+    if (getKnobs().size() > 0) {
+      System.out.println(" *** Knobs   :: " + getKnobs().size());
+      Enumeration e = knobs.propertyNames();
+      while (e.hasMoreElements()) {
+        String key = (String) e.nextElement();
+        System.out.println("    " + key + " = " + knobs.getProperty(key));
+      }
+      System.out.println("\n");
     }
-    System.out.println("\n");
   }
 }
