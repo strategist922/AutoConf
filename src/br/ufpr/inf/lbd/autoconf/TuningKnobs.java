@@ -27,11 +27,24 @@ import org.apache.hadoop.mapred.FileInputFormat;
 import org.apache.hadoop.mapred.JobConf;
 import org.apache.hadoop.mapred.Mapper;
 import org.apache.hadoop.mapred.Reducer;
-import org.apache.hadoop.util.StringUtils;
+import org.w3c.dom.Attr;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.Serializable;
+import java.lang.reflect.Method;
 import java.util.*;
 
 public class TuningKnobs implements Serializable {
@@ -220,5 +233,88 @@ public class TuningKnobs implements Serializable {
     }
   }
 
+  public void exportXml() throws ParserConfigurationException, TransformerException {
 
+    DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
+    DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
+
+    Document doc = docBuilder.newDocument();
+    Element rootElement = doc.createElement("jobs");
+    doc.appendChild(rootElement);
+
+    Element job = doc.createElement("job");
+    rootElement.appendChild(job);
+    job.setAttribute("name", getJobName());
+
+    Element jar = doc.createElement("jar");
+    jar.appendChild(doc.createTextNode(getJarFile()));
+    job.appendChild(jar);
+
+    if (getMapperName() != null) {
+      Element map = doc.createElement("mapper");
+      map.setAttribute("map", getMapperName().getName());
+
+      for (Method m : getMapperName().getMethods()) {
+        Element mapMethod = doc.createElement("method");
+        mapMethod.appendChild(doc.createTextNode(m.getName()));
+        map.appendChild(mapMethod);
+      }
+      job.appendChild(map);
+    }
+
+    if (getReducerName() != null){
+      Element reduce = doc.createElement("reducer");
+      reduce.setAttribute("reduce", getReducerName().getName());
+
+      for (Method r : getReducerName().getMethods()) {
+        Element reduceMethod = doc.createElement("method");
+        reduceMethod.appendChild(doc.createTextNode(r.getName()));
+        reduce.appendChild(reduceMethod);
+      }
+      job.appendChild(reduce);
+    }
+
+    Element input = doc.createElement("input");
+    HashMap<String, Long> m = getInputData();
+    input.setAttribute("elements", String.valueOf(m.size()));
+    if (m.size() > 0 ) {
+      input.setAttribute("total_size", String.valueOf(getInputSize()));
+      Iterator i = m.entrySet().iterator();
+      while (i.hasNext()) {
+        Map.Entry inputData = (Map.Entry) i.next();
+        Element data = doc.createElement("data");
+        data.setAttribute("path", String.valueOf(inputData.getKey()));
+        data.setAttribute("size", String.valueOf(inputData.getValue()));
+        input.appendChild(data);
+      }
+    }
+    job.appendChild(input);
+
+    Element tKnobs = doc.createElement("knobs");
+    tKnobs.setAttribute("elements", String.valueOf(getKnobs().size()));
+    if (getKnobs().size() > 0) {
+      Enumeration e = knobs.propertyNames();
+      while (e.hasMoreElements()) {
+        String key = (String) e.nextElement();
+        Element knob = doc.createElement("knob");
+        knob.setAttribute("tuning_knob", key);
+        knob.setAttribute("setup_value",knobs.getProperty(key));
+
+        tKnobs.appendChild(knob);
+      }
+    }
+    job.appendChild(tKnobs);
+
+    TransformerFactory transformerFactory = TransformerFactory.newInstance();
+    Transformer transformer = transformerFactory.newTransformer();
+    transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+    transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
+
+    DOMSource source = new DOMSource(doc);
+    // write the content into xml file
+    //StreamResult result = new StreamResult(new File("/tmp/"));
+    // Output to console for testing
+    StreamResult result = new StreamResult(System.out);
+    transformer.transform(source, result);
+  }
 }
