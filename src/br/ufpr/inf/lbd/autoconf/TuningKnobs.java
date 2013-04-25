@@ -141,7 +141,6 @@ public class TuningKnobs implements Serializable {
     }
 
     if (src.isEmpty()) {
-       System.out.println(" *** AutoConf: Input path not found. ");
        return;
     }
 
@@ -220,4 +219,6 @@ public class TuningKnobs implements Serializable {
       System.out.println("\n");
     }
   }
+
+
 }
