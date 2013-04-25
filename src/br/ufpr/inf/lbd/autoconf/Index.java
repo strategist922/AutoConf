@@ -18,6 +18,8 @@
 
 package br.ufpr.inf.lbd.autoconf;
 
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.TransformerException;
 import java.lang.reflect.Method;
 import java.util.Iterator;
 import java.util.Set;
@@ -31,15 +33,15 @@ public class Index {
   public TuningKnobs getTunedKnobs(TuningKnobs tKnobs) {
     String name = tKnobs.getJobName().split(" ")[0];
     if (!tKnobs.getJobName().matches("unknown")) {
-      tKnobs.showConfiguration();
-      System.out.println(" *** Mapper Methods");
-      for (Method m : tKnobs.getMapperName().getMethods()) {
-        System.out.println(" --- Method Name .. " + m.getName());
-      }
-
-      System.out.println(" *** Reducer Methods");
-      for (Method m : tKnobs.getReducerName().getMethods()) {
-        System.out.println(" --- Method Name .. " + m.getName());
+      /* print job xml info */
+      try {
+        tKnobs.exportXml();
+      } catch (ParserConfigurationException e) {
+        e.getMessage();
+        e.printStackTrace();
+      } catch (TransformerException e) {
+        e.getMessage();
+        e.printStackTrace();
       }
     }
 
@@ -104,7 +106,19 @@ public class Index {
   public void show(TuningKnobs k) {
     if (tree.containsKey(k.getJobName())) {
       TuningKnobs tuningKnobs = tree.get(k.getJobName());
+      /* print job configuration */
       tuningKnobs.showConfiguration();
+
+      /* print job xml info */
+      try {
+        tuningKnobs.exportXml();
+      } catch (ParserConfigurationException e) {
+        e.getMessage();
+        e.printStackTrace();
+      } catch (TransformerException e) {
+        e.getMessage();
+        e.printStackTrace();
+      }
     }
   }
 }
