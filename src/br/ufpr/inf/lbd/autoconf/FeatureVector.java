@@ -16,7 +16,7 @@ public class FeatureVector {
     setCpu(0);
     setDisk(0);
     setMem(0);
-    setDisk(0);
+    setNet(0);
   }
 
   public int getCpu() {
