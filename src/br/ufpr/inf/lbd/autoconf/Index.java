@@ -20,17 +20,22 @@ package br.ufpr.inf.lbd.autoconf;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
-import java.lang.reflect.Method;
 import java.util.Iterator;
 import java.util.Set;
 import java.util.TreeMap;
 
 public class Index {
   static TreeMap<String, TuningKnobs> tree = new TreeMap<String, TuningKnobs>();
+  Classifier dec = new Classifier();
 
-  /* TODO: This add should lock the tree to add new knobs
-   *       Translates TuningKnobs to Configuration */
+  /**
+   * TODO: (1) This method should lock the tree to add new knobs
+   * TODO: (2)
+   */
   public TuningKnobs getTunedKnobs(TuningKnobs tKnobs) {
+//    Classifier c = new Classifier();
+//    c.setFeatures(tKnobs);
+
     String name = tKnobs.getJobName().split(" ")[0];
     if (!tKnobs.getJobName().matches("unknown")) {
       /* print job xml info */
