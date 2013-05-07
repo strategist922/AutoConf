@@ -60,42 +60,19 @@
     <include name="**/?*.ftl"/>
   </patternset>
   
-  <!-- JDK definitions -->
-  
-  <property name="jdk.bin.1.6" value="${jdk.home.1.6}/bin"/>
-  <path id="jdk.classpath.1.6">
-    <fileset dir="${jdk.home.1.6}">
-      <include name="lib/deploy.jar"/>
-      <include name="lib/dt.jar"/>
-      <include name="lib/javaws.jar"/>
-      <include name="lib/jce.jar"/>
-      <include name="lib/jconsole.jar"/>
-      <include name="lib/management-agent.jar"/>
-      <include name="lib/plugin.jar"/>
-      <include name="lib/sa-jdi.jar"/>
-      <include name="../Classes/charsets.jar"/>
-      <include name="../Classes/classes.jar"/>
-      <include name="../Classes/jsse.jar"/>
-      <include name="../Classes/ui.jar"/>
-      <include name="lib/ext/apple_provider.jar"/>
-      <include name="lib/ext/dnsns.jar"/>
-      <include name="lib/ext/localedata.jar"/>
-      <include name="lib/ext/sunjce_provider.jar"/>
-      <include name="lib/ext/sunpkcs11.jar"/>
-    </fileset>
-  </path>
-  
-  <property name="project.jdk.home" value="${jdk.home.1.6}"/>
-  <property name="project.jdk.bin" value="${jdk.bin.1.6}"/>
-  <property name="project.jdk.classpath" value="jdk.classpath.1.6"/>
-  
   
   <!-- Project Libraries -->
   
-  <path id="library.lib.classpath">
-    <fileset dir="${basedir}/lib">
+  <path id="library.eclipse-juno.classpath">
+    <pathelement location="${basedir}/../../../../../Applications/eclipse-juno"/>
+    <fileset dir="${basedir}/../../../../../Applications/eclipse-juno/plugins">
       <patternset refid="library.patterns"/>
     </fileset>
+  </path>
+  
+  <path id="library.lib.classpath">
+    <pathelement location="${basedir}/lib/hadoop-core-1.0.4.jar"/>
+    <pathelement location="${basedir}/lib/java-getopt-1.0.13.jar"/>
   </path>
   
   <!-- Modules -->
@@ -106,9 +83,6 @@
   <dirname property="module.autoconf.basedir" file="${ant.file}"/>
   
   
-  <property name="module.jdk.home.autoconf" value="${project.jdk.home}"/>
-  <property name="module.jdk.bin.autoconf" value="${project.jdk.bin}"/>
-  <property name="module.jdk.classpath.autoconf" value="${project.jdk.classpath}"/>
   
   <property name="compiler.args.autoconf" value="${compiler.args}"/>
   
@@ -120,25 +94,27 @@
   </path>
   
   <path id="autoconf.module.production.classpath">
-    <path refid="${module.jdk.classpath.autoconf}"/>
     <path refid="library.lib.classpath"/>
+    <path refid="library.eclipse-juno.classpath"/>
   </path>
   
   <path id="autoconf.runtime.production.module.classpath">
     <pathelement location="${autoconf.output.dir}"/>
     <path refid="library.lib.classpath"/>
+    <path refid="library.eclipse-juno.classpath"/>
   </path>
   
   <path id="autoconf.module.classpath">
-    <path refid="${module.jdk.classpath.autoconf}"/>
     <pathelement location="${autoconf.output.dir}"/>
     <path refid="library.lib.classpath"/>
+    <path refid="library.eclipse-juno.classpath"/>
   </path>
   
   <path id="autoconf.runtime.module.classpath">
     <pathelement location="${autoconf.testoutput.dir}"/>
     <pathelement location="${autoconf.output.dir}"/>
     <path refid="library.lib.classpath"/>
+    <path refid="library.eclipse-juno.classpath"/>
   </path>
   
   
@@ -161,7 +137,7 @@
   
   <target name="compile.module.autoconf.production" description="Compile module AutoConf; production classes">
     <mkdir dir="${autoconf.output.dir}"/>
-    <javac destdir="${autoconf.output.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true" executable="${module.jdk.bin.autoconf}/javac">
+    <javac destdir="${autoconf.output.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true">
       <compilerarg line="${compiler.args.autoconf}"/>
       <bootclasspath refid="autoconf.module.bootclasspath"/>
       <classpath refid="autoconf.module.production.classpath"/>
@@ -194,25 +170,25 @@
   
   <target name="init.artifacts">
     <property name="artifacts.temp.dir" value="${basedir}/__artifacts_temp"/>
-    <property name="artifact.output.autoconf-alpha" value="${basedir}/build"/>
+    <property name="artifact.output.autoconf-0.1" value="${basedir}/build"/>
     <mkdir dir="${artifacts.temp.dir}"/>
     <property name="temp.jar.path.autoconf-0.1.jar" value="${artifacts.temp.dir}/autoconf-0.1.jar"/>
   </target>
   
-  <target name="artifact.autoconf-alpha" depends="init.artifacts, compile.module.autoconf" description="Build &#39;AutoConf-ALPHA&#39; artifact">
-    <property name="artifact.temp.output.autoconf-alpha" value="${artifacts.temp.dir}/AutoConf_ALPHA"/>
-    <mkdir dir="${artifact.temp.output.autoconf-alpha}"/>
+  <target name="artifact.autoconf-0.1" depends="init.artifacts, compile.module.autoconf" description="Build &#39;autoconf-0.1&#39; artifact">
+    <property name="artifact.temp.output.autoconf-0.1" value="${artifacts.temp.dir}/autoconf_0_1"/>
+    <mkdir dir="${artifact.temp.output.autoconf-0.1}"/>
     <jar destfile="${temp.jar.path.autoconf-0.1.jar}" duplicate="preserve" filesetmanifest="mergewithoutmain">
       <zipfileset file="${basedir}/src/META-INF/MANIFEST.MF" prefix="META-INF"/>
       <zipfileset dir="${autoconf.output.dir}"/>
     </jar>
-    <copy file="${temp.jar.path.autoconf-0.1.jar}" tofile="${artifact.temp.output.autoconf-alpha}/autoconf-0.1.jar"/>
+    <copy file="${temp.jar.path.autoconf-0.1.jar}" tofile="${artifact.temp.output.autoconf-0.1}/autoconf-0.1.jar"/>
   </target>
   
-  <target name="build.all.artifacts" depends="artifact.autoconf-alpha" description="Build all artifacts">
-    <mkdir dir="${artifact.output.autoconf-alpha}"/>
-    <copy todir="${artifact.output.autoconf-alpha}">
-      <fileset dir="${artifact.temp.output.autoconf-alpha}"/>
+  <target name="build.all.artifacts" depends="artifact.autoconf-0.1" description="Build all artifacts">
+    <mkdir dir="${artifact.output.autoconf-0.1}"/>
+    <copy todir="${artifact.output.autoconf-0.1}">
+      <fileset dir="${artifact.temp.output.autoconf-0.1}"/>
     </copy>
     
     <!-- Delete temporary files -->
