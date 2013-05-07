@@ -1,11 +1,13 @@
 package br.ufpr.inf.lbd.autoconf;
 
+import java.io.Serializable;
+
 /**
  * User: Edson
  * Date: 4/30/13
  * Time: 4:37 PM
  */
-public class FeatureVector {
+public class FeatureVector implements Serializable {
 
   int cpu;
   int mem;
