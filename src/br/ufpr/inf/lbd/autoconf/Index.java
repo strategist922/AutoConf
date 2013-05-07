@@ -26,7 +26,7 @@ import java.util.TreeMap;
 
 public class Index {
   static TreeMap<String, TuningKnobs> tree = new TreeMap<String, TuningKnobs>();
-  Classifier dec = new Classifier();
+//  Classifier dec = new Classifier();
 
   /**
    * TODO: (1) This method should lock the tree to add new knobs
