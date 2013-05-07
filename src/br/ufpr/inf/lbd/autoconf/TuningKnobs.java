@@ -27,7 +27,6 @@ import org.apache.hadoop.mapred.FileInputFormat;
 import org.apache.hadoop.mapred.JobConf;
 import org.apache.hadoop.mapred.Mapper;
 import org.apache.hadoop.mapred.Reducer;
-import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -40,7 +39,6 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.Serializable;
@@ -55,6 +53,7 @@ public class TuningKnobs implements Serializable {
   Properties knobs = new Properties();
   Class<? extends Mapper> mapperClass = null;
   Class<? extends Reducer> reducerClass = null;
+  FeatureVector features = new FeatureVector();
 
   public TuningKnobs(Configuration conf) throws IOException {
     /* Jar file */
@@ -75,6 +74,7 @@ public class TuningKnobs implements Serializable {
 
     /* Copy the tuning knobs from conf to this.knobs */
     saveTuningKnobs(conf);
+
   }
 
   public TuningKnobs(String name, Configuration conf) {
@@ -191,9 +191,8 @@ public class TuningKnobs implements Serializable {
   public void copyResourcesTo(Configuration conf) {
     if (knobs.size() > 0) {
       System.out.println("AutoConf: Applying " + knobs.size() + " tuned knobs from " + conf.size() + " knobs.");
-      Iterator i = conf.iterator();
-      while (i.hasNext()) {
-        Map.Entry<String, String> p = (Map.Entry<String, String>) i.next();
+      for (Object aConf : conf) {
+        Map.Entry<String, String> p = (Map.Entry<String, String>) aConf;
         if (knobs.getProperty(p.getKey()) != null) {
           conf.set(p.getKey(), knobs.getProperty(p.getKey()));
 //          System.out.println(" *** " + p.getKey() + " :: " + knobs.getProperty(p.getKey()));
