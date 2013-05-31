@@ -112,7 +112,7 @@ if ! test -d ${AUTOCONF_TMP}; then
 	mkdir -p ${AUTOCONF_TMP}
 fi
 
-if [ ${AUTOCONF_HOME} == "" ]; then
+if ! test -z ${AUTOCONF_HOME}; then
 	exit -1
 fi
 
