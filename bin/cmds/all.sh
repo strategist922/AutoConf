@@ -5,9 +5,16 @@ function timestamp {
   done
 }
 
+# network
+sar -n DEV 1 |timestamp >> net.log &
+
+# cpu
 sar 1 |timestamp >> cpu.log &
+
+# disk
 iostat -d 1 | timestamp >> disk.log &
 
+# mem
 if [ $(uname -o) == "Darwin" ]; then
 	vm_stat 1 | timestamp >> mem.log &
 else
