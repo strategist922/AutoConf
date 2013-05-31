@@ -3,22 +3,27 @@
 export PATH="${PATH}:/home/lbd/hadoop/ramiro/c3sl/AutoConf/bin/"
 
 match=1
-device=sda
+disk=sda
+net_device=eth0
 
 cd /tmp/autoconf/jobs/
 for machine in $(cat /tmp/out); do
-	cd $machine
-	{ for file in *.cpu;  do
-        sys2csv.sh -s $file $machine $match
+    cd $machine
+    { for file in *.net;  do
+        sys2csv -n $file $machine $match $net_device
     done } &
 
-	{ for file in *.disk; do
-        sys2csv.sh -i $file $machine $match $device
+    { for file in *.cpu;  do
+        sys2csv -s $file $machine $match
     done } &
 
-	{ for file in *.mem;  do
-        sys2csv.sh -v $file $machine $match
+    { for file in *.disk; do
+        sys2csv -i $file $machine $match $disk
     done } &
-	cd ..
+
+    { for file in *.mem;  do
+        sys2csv -v $file $machine $match
+    done } &
+    cd ..
 done
 cd -
