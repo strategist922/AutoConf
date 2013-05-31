@@ -26,9 +26,8 @@ AUTOCONF_CLASS="br.ufpr.inf.lbd.autoconf.AutoConfImpl"
 . "$(dirname $(which $0))/setenv"
 
 echo "******************************************************"
-echo "* Attention: This is an alpha version of AutoConf!"
+echo "* AutoConf version 1.0.0 "
 echo "* For more information, github.com/erlfilho/autoconf/"
-echo
 
 if ! test -z ${1}; then
 	if test ${1} = "-v"; then
