@@ -1,0 +1,4 @@
+DROP TABLE mem;
+DROP TABLE disk;
+DROP TABLE cpu;
+DROP TABLE net;
