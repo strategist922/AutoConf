@@ -1,0 +1,37 @@
+#!/bin/bash
+
+psql="psql -t -d results -U hadoop -c "
+query="select distinct query from mem order by query;"
+
+if ! test -d /tmp/autoconf/plot/; then
+    mkdir /tmp/autoconf/plot
+fi
+
+for stage in $(${psql} "${query}"); do
+    s=$(sed s/\'/\'\'/g <<< ${stage})
+    png="/tmp/autoconf/plot/${s}.mem.png"
+    s=$(sed s/%/\\\\%/g <<< ${s})
+    output="/tmp/autoconf/plot/${s}.mem"
+
+    $psql "COPY (SELECT time - (SELECT min(time) FROM mem),
+           avg(free) AS Free,
+           avg(swap) AS Swap
+           FROM mem
+           WHERE time IN (SELECT time FROM mem)
+            AND query LIKE '${s}'
+            AND free IS NOT NULL
+            AND swap IS NOT NULL
+           GROUP BY query, time ORDER BY time) TO '${output}' WITH CSV;"
+
+    gnuplot <<< "set title '$s'
+    set term png
+    set datafile separator ','
+    set output '$png'
+    set xlabel 'Time'
+    set xrange [0:350]
+    set ylabel 'Memory size (bytes)'
+    set yrange [0:2000000]
+    set style data lines
+    plot '$output' using 2 title 'Swap',\\
+         '$output' using 3 title 'Free'" &
+done
