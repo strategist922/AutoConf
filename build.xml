@@ -68,6 +68,9 @@
     <fileset dir="${basedir}/../../../../../Applications/eclipse-juno/plugins">
       <patternset refid="library.patterns"/>
     </fileset>
+    <fileset dir="${basedir}/lib">
+      <patternset refid="library.patterns"/>
+    </fileset>
   </path>
   
   <path id="library.lib.classpath">
