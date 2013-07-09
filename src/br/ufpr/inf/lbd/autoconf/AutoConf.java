@@ -21,12 +21,21 @@ package br.ufpr.inf.lbd.autoconf;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 
+/**
+ *
+ */
 public interface AutoConf extends Remote {
-  TuningKnobs autoConfigure(TuningKnobs tuningKnobs) throws RemoteException;
-  boolean add(TuningKnobs tuningKnobs) throws RemoteException;
-  boolean remove(TuningKnobs tuningKnobs) throws RemoteException;
-  boolean update(TuningKnobs tuningKnobs) throws RemoteException;
+  /**
+   *
+   * @param wrapper
+   * @return
+   * @throws RemoteException
+   */
+  Wrapper autoConfigure(Wrapper wrapper) throws RemoteException;
+
+  /**
+   *
+   * @throws RemoteException
+   */
   void startServer() throws RemoteException;
-  void list() throws RemoteException;
-  void show(TuningKnobs tuningKnobs) throws  RemoteException;
 }
