@@ -1,0 +1,137 @@
+#!/bin/bash
+# Monitorando a performance de jobs MapReduce
+
+function stat_help () {
+    echo ""
+    echo "Qualquer duvida favor enviar e-mail para bd@listas.c3sl.ufpr.br"
+    echo ""
+    echo "Usage: jobstat <options>"
+    echo ""
+    echo -e "\t -c|--cpu\tLaunch CPU monitor at slave nodes."
+    echo -e "\t -m|--mem\tLaunch MEM monitor at slave nodes."
+    echo -e "\t -d|--disk\tLaunch Disk monitor at slave nodes."
+    echo -e "\t -a|--all\tLaunch all monitors at slave nodes."
+    echo -e "\t -k|--kill [<machine_name>, all] Stop monitoring the given machine."
+    echo -e "\t -s|--save\t "
+    echo -e "\t -g|--generate-charts\t "
+    echo -e "\t -t|--copy-trace\t "
+    echo -e "\t -r|--remove-all\t "
+    echo -e "\t -h|--help\tThis help."
+
+    # echo -e "\t -t\t"
+    echo ""
+}
+
+function stat_run () {
+    case ${1} in
+        cpu)  monitor="${AUTOCONF_HOME}/bin/cmds/cpu.sh" ;;
+        mem)  monitor="${AUTOCONF_HOME}/bin/cmds/mem.sh" ;;
+        disk) monitor="${AUTOCONF_HOME}/bin/cmds/disk.sh";;
+        all)  monitor="${AUTOCONF_HOME}/bin/cmds/all.sh" ;;
+    esac
+    for m in ${AVAILABLE_MACHINES[@]}; do
+        cat ${monitor} | ssh $USER@$m bash -s &
+    done
+}
+
+function stat_kill () {
+    monitor=""
+
+    case ${1} in
+        cpu)  monitor="${AUTOCONF_HOME}/bin/cmds/kill_cpu.sh" ;;
+        mem)  monitor="${AUTOCONF_HOME}/bin/cmds/kill_mem.sh" ;;
+        disk) monitor="${AUTOCONF_HOME}/bin/cmds/kill_disk.sh";;
+        all)  monitor="${AUTOCONF_HOME}/bin/cmds/kill_all.sh" ;;
+    esac
+
+    if [ -z $monitor ]; then
+        echo "jobstat: warn: Wrong arg. Nothing to do."
+        exit -1
+    fi
+
+    for m in ${AVAILABLE_MACHINES[@]}; do
+        cat ${monitor} | ssh $USER@$m bash -s &
+    done
+}
+
+function stat_save () {
+    if [ -z $1 ]; then
+        echo "jobstat: save need a name."
+        exit -1
+    fi
+    for m in ${AVAILABLE_MACHINES[@]}; do
+        move="mv mem.log \"${1}.mem\""
+        echo $move | ssh $USER@$m bash -s &
+        move="mv cpu.log \"${1}.cpu\""
+        echo $move | ssh $USER@$m bash -s &
+        move="mv disk.log \"${1}.disk\""
+        echo $move | ssh $USER@$m bash -s &
+    done
+}
+
+function stat_remove_log () {
+    cd /tmp
+    for m in ${AVAILABLE_MACHINES}; do
+        ssh ${m} mv *.cpu /tmp &
+        ssh ${m} mv *.mem /tmp &
+        ssh ${m} mv *.disk /tmp &
+    done
+    cd -
+}
+
+## copying results from nodes
+function stat_copy_trace () {
+    for m in ${AVAILABLE_MACHINES[@]}; do
+		if ! test -d "${AUTOCONF_TMP}/${m}/"; then
+			mkdir -p "${AUTOCONF_TMP}/${m}/"
+		fi
+		scp -q ${USER}@${m}:*.cpu "${AUTOCONF_TMP}/${m}/" &
+		scp -q ${USER}@${m}:*.mem "${AUTOCONF_TMP}/${m}/" &
+		scp -q ${USER}@${m}:*.disk "${AUTOCONF_TMP}/${m}" &
+		sleep 0.8
+    done
+}
+
+function stat_generate_charts () {
+    for m in ${AVAILABLE_MACHINES[@]}; do
+        for cpu in $(ls -1 ${AUTOCONF_TMP}/${m}/*.cpu); do
+            ./sar2csv.rb "${cpu}" > "${AUTOCONF_TMP}/${m}/${cpu}.data"
+        done
+        for mem in $(ls -1 ${AUTOCONF_TMP}/${m}/*.mem); do
+            ./vmstat2csv.rb "${mem}" > "${AUTOCONF_TMP}/${m}/${mem}.data"
+        done
+        for disk in $(ls -1 ${AUTOCONF_TMP}/${m}/*.disk); do
+            ./iostat2csv.rb "${disk}" > "${AUTOCONF_TMP}/${m}/${disk}.data"
+        done
+    done
+}
+
+AVAILABLE_MACHINES=$(cat ${HADOOP_HOME}/conf/slaves)
+AUTOCONF_TMP="/tmp/autoconf/jobs/"
+if ! test -d ${AUTOCONF_TMP}; then
+	mkdir -p ${AUTOCONF_TMP}
+fi
+
+if [ ${AUTOCONF_HOME} == "" ]; then
+	exit -1
+fi
+
+while getopts cmds:ahk:rgt o; do
+    case "${1}" in
+        -a) stat_run all ; exit 0 ;;
+        -c) stat_run cpu ; exit 0 ;;
+        -d) stat_run disk ; exit 0 ;;
+        -g) stat_generate_charts ; exit 0 ;;
+        -h) stat_help ; exit 0 ;;
+        -m) stat_run mem ; exit 0 ;;
+        -r) stat_remove_log ; exit 0 ;;
+        -s) stat_save ${2}; exit 0 ;;
+        -t) stat_copy_trace ; exit 0 ;;
+        -k) stat_kill ${2} ; exit 0 ;;
+        *) stat_help ; exit 0 ;;
+    esac
+done
+
+if test -z $OPTIND; then
+	shift $OPTIND-1
+fi

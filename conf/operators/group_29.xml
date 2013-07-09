@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+  <entry key="groupid">29</entry>
+  <entry key="tuning">/Users/Edson/Documents/Repositories/AutoConf/conf/tuning/tuning_29.xml</entry>
+  <entry key="MAPJOIN">2</entry>
+  <entry key="FIL">2</entry>
+  <entry key="PTF">0</entry>
+  <entry key="SEL">2</entry>
+  <entry key="SRC">0</entry>
+  <entry key="JOIN">0</entry>
+  <entry key="LIM">0</entry>
+  <entry key="HASHTABLEDUMMY">0</entry>
+  <entry key="FOR">0</entry>
+  <entry key="LVJ">0</entry>
+  <entry key="LVF">0</entry>
+  <entry key="EX">0</entry>
+  <entry key="GBY">1</entry>
+  <entry key="MAP">0</entry>
+  <entry key="UNION">0</entry>
+  <entry key="UDTF">0</entry>
+  <entry key="OP">0</entry>
+  <entry key="TS">2</entry>
+  <entry key="FS">1</entry>
+  <entry key="RS">0</entry>
+  <entry key="HASHTABLESINK">0</entry>
+</properties>
