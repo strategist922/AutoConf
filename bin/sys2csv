@@ -1,0 +1,98 @@
+#!/bin/bash
+
+function vmstat2csv () {
+    while read line; do
+        case $line in
+            *r*) continue ;;
+        esac
+        # if ! $line =~ ".*r.*"; then  continue; fi
+		free=$(awk '{print $6}' <<< $line)
+		swap=$(awk '{print $5}' <<< $line)
+		timestamp=$(awk '{ print $1" "$2}' <<< $line)
+		echo "\"$timestamp\",\"${2}\",\"${1%.mem}\",${3},$free,$swap" >> /tmp/autoconf/mem.csv
+	done < ${1}
+}
+
+function sar2csv () {
+    while read line; do
+        case $line in
+            *r*) continue ;;
+        esac
+        # if ! $line =~ ".*all.*"; then  continue; fi
+		cpu_user=$(awk '{print $6}' <<< $line)
+		cpu_system=$(awk '{print $8}' <<< $line)
+		timestamp=$(awk '{ print $1" "$2}' <<< $line)
+		echo "\"$timestamp\",\"${2}\",\"${1%.cpu}\",${3},$cpu_user,$cpu_system" >> /tmp/autoconf/cpu.csv
+	done < ${1}
+}
+
+function iostat2csv () {
+    while read line; do
+        case $line in
+            *r*) continue ;;
+        esac
+        # if ! $line =~ ".*${3}.*"; then  continue; fi
+		tps=$(awk '{print $4}' <<< $line)
+		bulk_read=$(awk '{print $5}' <<< $line)
+		bulk_written=$(awk '{print $6}' <<< $line)
+		timestamp=$(awk '{ print $1" "$2}' <<< $line)
+		echo "\"$timestamp\",\"${2}\",\"${1%.disk}\",${3},$tps,$bulk_read,$bulk_written" >> /tmp/autoconf/disk.csv
+	done < ${1}
+}
+
+function net2csv () {
+    while read line; do
+        case $line in
+            *${4}*) 
+            timestamp=$(awk '{ print $1" "$2}' <<< $line)
+            # Total number of packets received per second.
+            rxpck=$(awk '{print $6}' <<< $line)
+            # Total number of packets transmitted per second.
+            txpck=$(awk '{print $7}' <<< $line)
+            # Total number of kilobytes received per second.
+            rxkB=$(awk '{print $8}' <<< $line)
+            # Total number of kilobytes transmitted per second.
+            txkB=$(awk '{print $9}' <<< $line)
+            # Number of compressed packets received per second.
+            rxcmp=$(awk '{print $10}' <<< $line)
+            # Number of compressed packets transmitted per second.
+            txcmp=$(awk '{print $11}' <<< $line)
+            # Number of multicast packets received per second.
+            rxmcst=$(awk '{print $12}' <<< $line)
+            echo "\"$timestamp\",\"${2}\",\"${1%.net}\",${3},$rxpck,$txpck,$rxkB,$txkB,$rxcmp,$txcmp,$rxmcst" >> /tmp/autoconf/net.csv
+        esac
+	done < ${1}
+}
+
+function help () {
+	echo -e "USAGE: sys2csv [-i|-s|-v] <trace_file.txt> "
+	echo -e "\t-i <file> <match> Convert iostat trace to csv."
+	echo -e "\t-s <file> <match> Convert sar trace to csv."
+	echo -e "\t-v <file> <match> Convert vmstat trace to csv."
+}
+
+# Check if the argument file exist
+if test "${2}" == ""; then help; exit -1; fi
+if test "${3}" == ""; then help; exit -1; fi
+
+AVAILABLE_MACHINES=$(cat /tmp/out)
+
+# $1 = option
+# $2 = file
+# $3 = machine
+# $4 = match
+# $5 = disk device (sda/sdb/vba/vbb)
+
+while getopts n::::i::::s:::v:::h o; do
+	case "${1}" in
+		-i) iostat2csv $2 $3 $4 $5; exit 0 ;;
+		-s) sar2csv $2 $3 $4; exit 0 ;;
+		-v) vmstat2csv $2 $3 $4; exit 0 ;;
+		-n) net2csv $2 $3 $4 $5; exit 0 ;;
+		-h) help ; exit 0 ;;
+		*) help ; exit 0 ;;
+	esac
+done
+if test -z $OPTIND; then
+   shift $OPTIND-1
+fi

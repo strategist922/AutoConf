@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -16,10 +17,13 @@
  * limitations under the License.
  */
 
+=======
+>>>>>>> d3546c528d36d61db66978913b7a995a6cb881f2
 package br.ufpr.inf.lbd.autoconf.classifiers;
 
 import br.ufpr.inf.lbd.autoconf.Wrapper;
 
+<<<<<<< HEAD
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -28,10 +32,17 @@ import java.util.HashMap;
 import java.util.InvalidPropertiesFormatException;
 import java.util.Map;
 import java.util.Properties;
+=======
+import java.util.Iterator;
+import java.util.Map;
+
+
+>>>>>>> d3546c528d36d61db66978913b7a995a6cb881f2
 
 /**
  * User: Edson
  * Date: 5/27/13
+<<<<<<< HEAD
  * Time: 4:39 PM
  */
 public class AC_Equality implements Classifiers {
@@ -178,3 +189,25 @@ public class AC_Equality implements Classifiers {
       counter.put(groupId, 1);
   }
 }
+=======
+ * Time: 6:43 PM
+ */
+public class AC_Equality implements Classifiers {
+
+  Map<Map<String, Integer>, Integer> features;
+
+  @Override
+  public Wrapper classify(Wrapper wrapper) {
+
+    /* Get Feature Vector */
+    Map<String, Integer> key = wrapper.getFeatureVector().getFeatures();
+
+    if (features.containsKey(key))
+      features.put(key, features.get(key) + 1);
+    else
+      features.put(key, 1);
+
+    return wrapper;
+  }
+}
+>>>>>>> d3546c528d36d61db66978913b7a995a6cb881f2

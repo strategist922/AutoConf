@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -16,15 +17,24 @@
  * limitations under the License.
  */
 
+=======
+>>>>>>> d3546c528d36d61db66978913b7a995a6cb881f2
 package br.ufpr.inf.lbd.autoconf.classifiers;
 
 import br.ufpr.inf.lbd.autoconf.Wrapper;
 
+<<<<<<< HEAD
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.*;
+=======
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+>>>>>>> d3546c528d36d61db66978913b7a995a6cb881f2
 
 /**
  * User: Edson
@@ -32,6 +42,7 @@ import java.util.*;
  * Time: 4:39 PM
  */
 public class AC_EuclideanDistance implements Classifiers {
+<<<<<<< HEAD
   /* List of operators from all jobs
    * <GroupID, <OperatorName, OperatorCounter> > */
   HashMap<Integer, Map<String, Integer>> operators = new HashMap<Integer, Map<String, Integer>>();
@@ -187,4 +198,30 @@ public class AC_EuclideanDistance implements Classifiers {
     else
       counter.put(groupId, 1);
   }
+=======
+  Map<Map<String, Integer>, Integer> features;
+
+  @Override
+  public Wrapper classify(Wrapper wrapper) {
+
+    /* Get Feature Vector */
+    Map<String, Integer> key = wrapper.getFeatureVector().getFeatures();
+
+    if (features.containsKey(key))
+      features.put(key, features.get(key) + 1);
+    else
+      features.put(key, 1);
+
+    show();
+    return wrapper;
+  }
+
+  public void show() {
+    Iterator i = features.entrySet().iterator();
+    while (i.hasNext()) {
+      Map.Entry<String, Integer> f = (Map.Entry<String, Integer>) i.next();
+      System.out.println(" " + f.getKey() + " " + f.getValue());
+    }
+  }
+>>>>>>> d3546c528d36d61db66978913b7a995a6cb881f2
 }

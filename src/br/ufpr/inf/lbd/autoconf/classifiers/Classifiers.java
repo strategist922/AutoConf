@@ -20,6 +20,7 @@ package br.ufpr.inf.lbd.autoconf.classifiers;
 
 import br.ufpr.inf.lbd.autoconf.Wrapper;
 
+<<<<<<< HEAD
 public interface Classifiers {
   /**
    *
@@ -33,4 +34,8 @@ public interface Classifiers {
    * @param tuningDir
    */
   void loadTuningGroups(String tuningDir);
+=======
+interface Classifiers {
+  Wrapper classify(Wrapper wrapper);
+>>>>>>> d3546c528d36d61db66978913b7a995a6cb881f2
 }

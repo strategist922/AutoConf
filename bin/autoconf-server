@@ -25,9 +25,15 @@ AUTOCONF_CLASS="br.ufpr.inf.lbd.autoconf.AutoConfImpl"
 ## Set env
 . "$(dirname $(which $0))/setenv"
 
+<<<<<<< HEAD
 echo " ******************************************************"
 echo " * AutoConf version 1.0.0 "
 echo " * For more information, github.com/erlfilho/autoconf/"
+=======
+echo "******************************************************"
+echo "* AutoConf version 1.0.0 "
+echo "* For more information, github.com/erlfilho/autoconf/"
+>>>>>>> d3546c528d36d61db66978913b7a995a6cb881f2
 
 if ! test -z ${1}; then
 	if test ${1} = "-v"; then

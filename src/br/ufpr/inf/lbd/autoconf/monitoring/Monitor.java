@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -16,6 +17,8 @@
  * limitations under the License.
  */
 
+=======
+>>>>>>> d3546c528d36d61db66978913b7a995a6cb881f2
 package br.ufpr.inf.lbd.autoconf.monitoring;
 
 import java.io.File;
@@ -26,12 +29,17 @@ public class Monitor {
   private String hadoopHome;
   private String autoconfHome;
   private String path;
+<<<<<<< HEAD
   private String jobName;
 
   /**
    *
    * @param jobName
    */
+=======
+  private String jobName = "";
+
+>>>>>>> d3546c528d36d61db66978913b7a995a6cb881f2
   public Monitor(String jobName) {
     getenv();
     setJobName(jobName);
@@ -43,7 +51,11 @@ public class Monitor {
    */
   private void setJobName(String jobName) {
     this.jobName = jobName;
+<<<<<<< HEAD
     this.jobName = this.jobName.replace("\n", " ").replace(" ", "_").replace("...","_");
+=======
+
+>>>>>>> d3546c528d36d61db66978913b7a995a6cb881f2
   }
 
   /**
@@ -52,8 +64,12 @@ public class Monitor {
    * @throws InterruptedException
    */
   public void start() throws IOException, InterruptedException {
+<<<<<<< HEAD
     // System.out.println("AutoConf: Monitor: Start.");
     // monitor("start");
+=======
+    monitor("start");
+>>>>>>> d3546c528d36d61db66978913b7a995a6cb881f2
   }
 
   /**
@@ -62,9 +78,14 @@ public class Monitor {
    * @throws InterruptedException
    */
   public void stop() throws IOException, InterruptedException {
+<<<<<<< HEAD
     // System.out.println("AutoConf: Monitor: Stop.");
     // monitor("stop");
     // monitor("save");
+=======
+    monitor("save");
+    monitor("stop");
+>>>>>>> d3546c528d36d61db66978913b7a995a6cb881f2
   }
 
   /**
@@ -75,6 +96,7 @@ public class Monitor {
    */
   private void monitor (String resource) throws IOException, InterruptedException {
     if (resource.matches("start")) {
+<<<<<<< HEAD
       jobstat_exec(" -a "); // monitoring all slaves
     } else if (resource.matches("stop")) {
       jobstat_exec(" -k all"); // stop monitoring all slaves
@@ -83,12 +105,25 @@ public class Monitor {
       // Thread.sleep(500); // sleep 0.5 seconds
       // jobstat_exec(" -t "); // Copy trace info from slaves
       // jobstat_exec(" -r "); // Remove trace info in slaves
+=======
+      jobstat(" -a "); // monitoring all slaves
+    } else if (resource.matches("stop")) {
+      jobstat(" -k all"); // stop monitoring all slaves
+    } else if (resource.matches("save")) {
+      jobstat(" -s " + jobName); // Save trace info
+      jobstat(" -t "); // Copy trace info from slaves
+      jobstat(" -r "); // Remove trace info in slaves
+>>>>>>> d3546c528d36d61db66978913b7a995a6cb881f2
     }
   }
 
   /**
+<<<<<<< HEAD
    * Launch the monitor script with ProcessBuilder
    * XXX: Not working on my Mac :|
+=======
+   * Launch the monitor script
+>>>>>>> d3546c528d36d61db66978913b7a995a6cb881f2
    * @param operation
    * @return
    * @throws IOException
@@ -96,12 +131,17 @@ public class Monitor {
    */
   public int jobstat (String operation) throws IOException, InterruptedException {
     Process process;
+<<<<<<< HEAD
     ProcessBuilder script = new ProcessBuilder("./jobstat", operation);
+=======
+    ProcessBuilder script = new ProcessBuilder("jobstat", operation);
+>>>>>>> d3546c528d36d61db66978913b7a995a6cb881f2
     Map<String, String> env = script.environment();
     env.put("HADOOP_HOME", hadoopHome);
     env.put("AUTOCONF_HOME", autoconfHome);
     env.put("PATH", path);
     script.directory(new File(autoconfHome + "/bin"));
+<<<<<<< HEAD
     System.out.println("AutoConf: Monitor: HADOOP_HOME="+ hadoopHome);
     System.out.println("AutoConf: Monitor: AUTOCONF_HOME="+ autoconfHome);
     System.out.println("AutoConf: Monitor: PATH="+ path);
@@ -128,6 +168,11 @@ public class Monitor {
     System.out.println("AutoConf: Monitor: Lauching jobstat " + operation);
     p.waitFor();
     return p.exitValue();
+=======
+    process = script.start();
+    System.out.println("AutoConf: Monitor: Lauching jobstat " + operation);
+    return process.waitFor();
+>>>>>>> d3546c528d36d61db66978913b7a995a6cb881f2
   }
 
   /**

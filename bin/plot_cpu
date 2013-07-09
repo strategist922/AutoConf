@@ -1,0 +1,40 @@
+#!/bin/bash
+
+psql="psql -t -d results -U hadoop -c "
+query="select distinct query from cpu order by query;"
+
+if ! test -d /tmp/autoconf/plot/; then
+    mkdir /tmp/autoconf/plot
+fi
+
+for stage in $(${psql} "${query}"); do
+    s=$(sed s/\'/\'\'/g <<< ${stage})
+    png="/tmp/autoconf/plot/${s}.cpu.png"
+    s=$(sed s/%/\\\\%/g <<< ${s})
+    output="/tmp/autoconf/plot/${s}.cpu"
+
+    $psql "COPY (SELECT time - (SELECT min(time) FROM cpu),
+           avg(cpu_user) AS CPU_User,
+           avg(cpu_system) AS CPU_System
+           FROM cpu
+           WHERE time IN (SELECT time FROM cpu)
+            AND query LIKE '${s}'
+            AND cpu_user IS NOT NULL
+            AND cpu_system IS NOT NULL
+           GROUP BY query, time ORDER BY time) TO '${output}' WITH CSV;"
+
+    # echo "set timefmt '%H:%M:%S'"
+    # echo "set xrange [\"00:00:00\":\"00:03:00\"]"
+    # set xdata time
+    gnuplot <<< "set title '$s'
+    set term png
+    set datafile separator ','
+    set output '$png'
+    set xlabel 'Time'
+    set xrange [0:350]
+    set ylabel 'CPU Usage'
+    set yrange [0:100]
+    set style data lines
+    plot '$output' using 2 title 'User',\\
+         '$output' using 3 title 'System'" &
+done

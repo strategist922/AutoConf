@@ -112,7 +112,11 @@ if ! test -d ${AUTOCONF_TMP}; then
 	mkdir -p ${AUTOCONF_TMP}
 fi
 
+<<<<<<< HEAD
 if [ ${AUTOCONF_HOME} == "" ]; then
+=======
+if ! test -z ${AUTOCONF_HOME}; then
+>>>>>>> d3546c528d36d61db66978913b7a995a6cb881f2
 	exit -1
 fi
 

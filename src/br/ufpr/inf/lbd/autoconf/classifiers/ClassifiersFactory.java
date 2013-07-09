@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -42,4 +43,18 @@ public class ClassifiersFactory {
     }
     return getClassifier(c);
   }
+=======
+package br.ufpr.inf.lbd.autoconf.classifiers;
+
+public class ClassifiersFactory {
+  public static Classifiers getClassifier(String c) {
+    if (c.equalsIgnoreCase("KMeans"))
+      return new AC_KMeans();
+    else if (c.equalsIgnoreCase("EuclideanDistance"))
+      return new AC_EuclideanDistance();
+    else if (c.equalsIgnoreCase("Equality"))
+      return new AC_Equality();
+    return null;
+  }
+>>>>>>> d3546c528d36d61db66978913b7a995a6cb881f2
 }
