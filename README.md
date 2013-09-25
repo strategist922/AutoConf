@@ -13,14 +13,18 @@ Compile
 -------
 
 > $ git clone https://github.com/erlfilho/AutoConf.git
+
 > $ cd AutoConf
+
 > $ ant
 
 Configure
 ---------
 
 > $ vim autoconf.conf
+
 > $ AUTOCONF\_HOME=_<path-to-autoconf>_
+
 > $ vim conf/server.policy
 
 In case you want to res
@@ -36,9 +40,6 @@ JavaDoc
 -------
 
 [JavaDoc](http://www.inf.ufpr.br/erlfilho/autoconf/)
-
-Join us!
---------
 
 License
 -------
