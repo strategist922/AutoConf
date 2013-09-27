@@ -88,6 +88,7 @@ public class Equality implements Classifiers {
 	 * @param src  Feature Vector
 	 * @param dest Feature Vector
 	 * @return boolean
+	 * @TODO: se livra do equals e mude pro compareTo
 	 */
 	/*
   private boolean isEqual(Map<String, Integer> src, Map<String, Integer> dest) {

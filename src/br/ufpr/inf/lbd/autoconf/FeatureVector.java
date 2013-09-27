@@ -31,6 +31,8 @@ import org.apache.hadoop.mapred.JobConf;
 import org.apache.hadoop.mapred.Mapper;
 import org.apache.hadoop.mapred.Reducer;
 
+import fr.inria.peerunit.TestRunner;
+
 import java.beans.XMLDecoder;
 import java.io.*;
 import java.util.Enumeration;
@@ -38,6 +40,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Logger;
 
 public class FeatureVector implements Serializable, Comparable<FeatureVector> {
 
@@ -52,6 +55,8 @@ public class FeatureVector implements Serializable, Comparable<FeatureVector> {
   private Class<? extends Reducer> reducerClass = null;
   private HashMap<String, Long> inputData = new HashMap<String, Long>();
   private Map<String, Integer> featureVector = new HashMap<String, Integer>();
+  private static final Logger LOG = Logger.getLogger(FeatureVector.class.getName());
+
 
   /**
    *
@@ -166,7 +171,7 @@ public class FeatureVector implements Serializable, Comparable<FeatureVector> {
   public void saveConfiguration(JobConf conf, String ext) throws IOException {
     OutputStream out = new FileOutputStream(getJobName() + ext);
     conf.writeXml(out);
-    System.out.println("AutoConf: Configuration has been saved to " + getJobName() + ext + ". ");
+    LOG.fine("AutoConf: Configuration has been saved to " + getJobName() + ext + ". ");
   }
 
   /**
@@ -229,7 +234,7 @@ public class FeatureVector implements Serializable, Comparable<FeatureVector> {
     Path local = new Path(getJar());
     String jarHDFSPath = conf.get("mapred.jar");
     if (jarHDFSPath.isEmpty()) {
-      System.out.println("AutoConf: Error: MapRedJar not found. Exiting...");
+    	LOG.fine("AutoConf: Error: MapRedJar not found. Exiting...");
       throw new IOException();
     }
 
@@ -245,9 +250,9 @@ public class FeatureVector implements Serializable, Comparable<FeatureVector> {
 
     if (hdfsFileSystem.exists(hdfs)) {
       hdfsFileSystem.copyToLocalFile(false, hdfs, local);
-      System.out.println("AutoConf: Jar file " + fileName + " copied to " + local);
+       LOG.fine("AutoConf: Jar file " + fileName + " copied to " + local);
     } else {
-      System.out.println("AutoConf: Jar file " + fileName + " does not exist on " + local);
+    	LOG.fine("AutoConf: Jar file " + fileName + " does not exist on " + local);
       throw new IOException();
     }
   }
@@ -277,7 +282,7 @@ public class FeatureVector implements Serializable, Comparable<FeatureVector> {
   private void savePlan(JobConf conf) throws IOException {
     String planPath = conf.get("hive.exec.plan");
     if (planPath.isEmpty()) {
-      System.out.println("AutoConf: Error: Query Plan not found. Exiting...");
+    	LOG.fine("AutoConf: Error: Query Plan not found. Exiting...");
       throw new IOException();
     }
 
@@ -293,9 +298,9 @@ public class FeatureVector implements Serializable, Comparable<FeatureVector> {
 
     if (hdfsFileSystem.exists(hdfs)) {
       hdfsFileSystem.copyToLocalFile(false, hdfs, local);
-      System.out.println("AutoConf: Query Plan file " + hdfs.getName() + " copied to " + local);
+      LOG.fine("AutoConf: Query Plan file " + hdfs.getName() + " copied to " + local);
     } else {
-      System.out.println("AutoConf: Query Plan file " + hdfs.getName() + " does not exist on " + local);
+    	LOG.fine("AutoConf: Query Plan file " + hdfs.getName() + " does not exist on " + local);
       throw new IOException();
     }
   }
@@ -434,7 +439,7 @@ public class FeatureVector implements Serializable, Comparable<FeatureVector> {
     FileStatus items[] = srcFs.listStatus(pathItems);
 
     if ((items == null) || ((items.length == 0) && (!srcFs.exists(srcPath)))) {
-      System.out.println("AutoConf: Warning: Could not determine the size of input " + src);
+    	LOG.fine("AutoConf: Warning: Could not determine the size of input " + src);
       // throw new FileNotFoundException();
     } else {
       long length[] = new long[items.length];
