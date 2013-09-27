@@ -71,7 +71,7 @@ public class TuningKnobs implements Serializable {
    * to the local this.knobs
    * @param conf
    */
-  private void setTuningKnobs(Configuration conf) {
+ private void setTuningKnobs(Configuration conf) {
     Iterator i = conf.iterator();
     while (i.hasNext()) {
       Map.Entry<String, String> p = (Map.Entry<String, String>) i.next();
@@ -79,6 +79,7 @@ public class TuningKnobs implements Serializable {
         knobs.setProperty(p.getKey(), p.getValue());
     }
   }
+
 
   /**
    * Copy the Tuning knobs from this.knobs

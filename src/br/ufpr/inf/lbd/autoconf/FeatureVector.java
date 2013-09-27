@@ -33,12 +33,13 @@ import org.apache.hadoop.mapred.Reducer;
 
 import java.beans.XMLDecoder;
 import java.io.*;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-public class FeatureVector implements Serializable {
+public class FeatureVector implements Serializable, Comparable<FeatureVector> {
 
   private long inputSize;
   /* This should move to autoconf.conf */
@@ -61,11 +62,28 @@ public class FeatureVector implements Serializable {
     initializeFeatureVector();
     setTuningKnobs(conf);
   }
+  public FeatureVector () {
+
+	  }
+  
+  
+  public void setFeatureVector(Map<String, Integer> featureVector){
+	  this.featureVector=featureVector;
+  }
 
   /**
    *
    */
   private void initializeFeatureVector() {
+	  
+	 	
+	for(Operators op : Operators.values()){
+		featureVector.put(op.toString(),0);
+	}
+   /*
+    * TODO: delete the puts below
+    * Switched to the Enumeration "Operators"
+    * 
     featureVector.put("EX", 0); // ExtractOperator
     featureVector.put("FIL", 0); // FilterOperator
     featureVector.put("FOR", 0); // ForwardOperator
@@ -87,7 +105,7 @@ public class FeatureVector implements Serializable {
     featureVector.put("SEL", 0); // SelectOperator
     featureVector.put("TS", 0); // TableScanOperator
     featureVector.put("UDTF", 0); // UDTFOperator
-    featureVector.put("UNION", 0); // UnionOperator
+    featureVector.put("UNION", 0); // UnionOperator*/
   }
 
   /**
@@ -105,10 +123,6 @@ public class FeatureVector implements Serializable {
     if (!getQuery().matches("")) {
       setJar(jobConf);
       setPlan(jobConf);
-
-      // Disabled: setInputSize(conf);
-      // Disabled: setMapperName(jobConf.getMapperClass());
-      // Disabled: setReducerName(jobConf.getReducerClass());
 
       saveJar(jobConf);
       savePlan(jobConf);
@@ -443,4 +457,20 @@ public class FeatureVector implements Serializable {
   public long getInputSize() {
     return inputSize;
   }
+
+@Override
+public int compareTo(FeatureVector fv) {
+	
+	for (String key : fv.featureVector.keySet()) {
+	      int srcValue = 0, destValue = 0;
+	      if (fv.featureVector.get(key) != null)
+	        srcValue = fv.featureVector.get(key);
+	      if (this.featureVector.get(key) != null)
+	        destValue = this.featureVector.get(key);
+	      if (srcValue != destValue) {
+	        return 1;
+	      }
+	    }
+	    return 0;
+}
 }

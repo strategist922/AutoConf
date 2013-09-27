@@ -19,8 +19,8 @@
 
 package br.ufpr.inf.lbd.autoconf;
 
-import br.ufpr.inf.lbd.autoconf.classifiers.Classifiers;
-import br.ufpr.inf.lbd.autoconf.classifiers.ClassifiersFactory;
+import br.ufpr.inf.lbd.autoconf.clustering.Classifiers;
+import br.ufpr.inf.lbd.autoconf.clustering.ClassifiersFactory;
 
 import java.io.FileInputStream;
 import java.io.IOException;
