@@ -38,14 +38,13 @@
     <exclude name="**/*.obj/**"/>
   </patternset>
   <patternset id="library.patterns">
-    <include name="*.zip"/>
+    <include name="*.jar"/>
     <include name="*.apk"/>
     <include name="*.war"/>
     <include name="*.egg"/>
     <include name="*.ear"/>
     <include name="*.ane"/>
     <include name="*.swc"/>
-    <include name="*.jar"/>
   </patternset>
   <patternset id="compiler.resources">
     <include name="**/?*.properties"/>
@@ -64,8 +63,8 @@
   <!-- Project Libraries -->
   
   <path id="library.eclipse-juno.classpath">
-    <pathelement location="${basedir}/../../../../../Applications/eclipse-juno"/>
-    <fileset dir="${basedir}/../../../../../Applications/eclipse-juno/plugins">
+    <pathelement location="/Users/eduardo/Documents/workspace/AutoConf"/>
+    <fileset dir="${basedir}/lib">
       <patternset refid="library.patterns"/>
     </fileset>
     <fileset dir="${basedir}/lib">
@@ -75,12 +74,25 @@
   
   <path id="library.lib.classpath">
     <pathelement location="${basedir}/lib/hadoop-core-1.0.4.jar"/>
+    <pathelement location="${basedir}/lib/*.jar"/>
     <pathelement location="${basedir}/lib/java-getopt-1.0.13.jar"/>
   </path>
   
-  <!-- Modules -->
+  <!-- Libraries harvesting -->
+	
+	<property name="lib.dir" value="${basedir}/lib" />
+
+	<property name="ST4-4.0.4.url" value="http://repo1.maven.org/maven2/org/antlr/ST4/4.0.4/ST4-4.0.4.jar" />
+	
+	  <target name="lib.install" >
+	    <get dest="${lib.dir}/ST4-4.0.4.jar" src="${ST4-4.0.4.url}" usetimestamp="true"/>
+	  </target>
+	
   
-  
+
+
+	
+
   <!-- Module AutoConf -->
   
   <dirname property="module.autoconf.basedir" file="${ant.file}"/>
@@ -141,7 +153,6 @@
   <target name="compile.module.autoconf.production" description="Compile module AutoConf; production classes">
     <mkdir dir="${autoconf.output.dir}"/>
     <javac destdir="${autoconf.output.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true">
-      <compilerarg line="${compiler.args.autoconf}"/>
       <bootclasspath refid="autoconf.module.bootclasspath"/>
       <classpath refid="autoconf.module.production.classpath"/>
       <src refid="autoconf.module.sourcepath"/>
