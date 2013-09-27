@@ -168,7 +168,7 @@
   
   <target name="compile.module.autoconf.production" description="Compile module AutoConf; production classes">
     <mkdir dir="${autoconf.output.dir}"/>
-    <javac destdir="${autoconf.output.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true">
+    <javac destdir="${autoconf.output.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true" includeAntRuntime="no">
       <bootclasspath refid="autoconf.module.bootclasspath"/>
       <classpath refid="autoconf.module.production.classpath"/>
       <src refid="autoconf.module.sourcepath"/>
