@@ -31,8 +31,6 @@ import org.apache.hadoop.mapred.JobConf;
 import org.apache.hadoop.mapred.Mapper;
 import org.apache.hadoop.mapred.Reducer;
 
-import fr.inria.peerunit.TestRunner;
-
 import java.beans.XMLDecoder;
 import java.io.*;
 import java.util.Enumeration;
